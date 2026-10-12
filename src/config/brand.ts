@@ -1,0 +1,17 @@
+export const BRAND_CONFIG = {
+  nameAr: 'منيرة الحربي',
+  nameEn: 'MUNIRA ALHARBI',
+  taglineAr: 'من الفكرة إلى مشروع يُذكر باسمك',
+  taglineEn: 'From Concept to an Enduring Fashion House',
+  authorAr: 'المصممة منيرة الحربي',
+  authorEn: 'Fashion Designer Munira Alharbi',
+  experienceYears: '20+',
+  country: 'الكويت',
+  countryEn: 'Kuwait',
+  instagram: 'https://www.instagram.com/muniracollection/',
+  instagramHandle: '@muniracollection',
+  bookTitleAr: 'دليل نجاح مشروع الأزياء',
+  bookTitleEn: 'The Fashion Business Success Guide',
+  specialEditionAr: 'إصدار خاص',
+  specialEditionEn: 'SPECIAL EDITION',
+} as const;
