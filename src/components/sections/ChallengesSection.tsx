@@ -1,106 +1,107 @@
 import React, { useState, useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Compass, Sparkles, ArrowDown, CheckCircle2 } from 'lucide-react';
+import {
+  Sparkles,
+  ArrowDown,
+  TrendingUp,
+  Store,
+  Layers,
+  ShieldCheck,
+  CheckCircle2,
+  DollarSign,
+  ArrowUpRight,
+  Compass,
+} from 'lucide-react';
 import { useLanguage } from '../../hooks/useLanguage';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const ChallengesSection: React.FC = () => {
   const { content, isRtl, language } = useLanguage();
-  const [activeChallengeIndex, setActiveChallengeIndex] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0); // 0 to 1
+  const [activeFilter, setActiveFilter] = useState<'all' | '01' | '02' | '03'>('all');
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [mousePos, setMousePos] = useState<{ [key: number]: { x: number; y: number } }>({});
 
   const sectionRef = useRef<HTMLElement>(null);
+  const transitionBridgeRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
-  const scrollTrackRef = useRef<HTMLDivElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const circularRingRef = useRef<SVGCircleElement>(null);
-  const closingRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
 
   const challenges = content.challenges.items;
-  const currentChallenge = challenges[activeChallengeIndex] || challenges[0];
 
-  // SVG Circular Gauge calculation
-  const circleRadius = 26;
-  const circumference = 2 * Math.PI * circleRadius;
-  const strokeOffset = circumference - scrollProgress * circumference;
+  // Handle card mouse spotlight
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setMousePos((prev) => ({
+      ...prev,
+      [index]: { x, y },
+    }));
+  };
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) return;
 
     const ctx = gsap.context(() => {
-      // 1. Header Entrance Reveal
-      if (headlineRef.current) {
+      // 1. Seamless Bridge Ambient Entrance
+      if (transitionBridgeRef.current) {
         gsap.fromTo(
-          headlineRef.current.querySelectorAll('.reveal-elem'),
-          { opacity: 0, y: 35 },
+          transitionBridgeRef.current.querySelectorAll('.bridge-elem'),
+          { opacity: 0, y: 25 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
-            stagger: 0.12,
+            duration: 1,
+            stagger: 0.15,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: headlineRef.current,
-              start: 'top 80%',
+              trigger: transitionBridgeRef.current,
+              start: 'top 90%',
               toggleActions: 'play none none none',
             },
           }
         );
       }
 
-      // 2. Scroll-Linked Progress Indicator linked to Challenges Container
-      if (scrollTrackRef.current) {
-        ScrollTrigger.create({
-          trigger: scrollTrackRef.current,
-          start: 'top 75%',
-          end: 'bottom 45%',
-          scrub: 0.3,
-          onUpdate: (self) => {
-            const p = self.progress;
-            setScrollProgress(p);
-
-            // Determine active challenge index (0, 1, or 2) with smooth thresholds
-            let targetIdx = 0;
-            if (p >= 0.66) {
-              targetIdx = 2;
-            } else if (p >= 0.33) {
-              targetIdx = 1;
-            } else {
-              targetIdx = 0;
-            }
-            setActiveChallengeIndex(targetIdx);
-
-            // Directly animate the linear progress bar for 60fps compositor smoothness
-            if (progressBarRef.current) {
-              gsap.set(progressBarRef.current, { scaleY: p, transformOrigin: 'top center' });
-            }
-
-            // Animate circular SVG gauge offset
-            if (circularRingRef.current) {
-              const currentOffset = circumference - p * circumference;
-              gsap.set(circularRingRef.current, { strokeDashoffset: currentOffset });
-            }
-          },
-        });
-      }
-
-      // 3. Closing Statement Reveal
-      if (closingRef.current) {
+      // 2. Main Editorial Headline Stagger Reveal
+      if (headlineRef.current) {
         gsap.fromTo(
-          closingRef.current.querySelectorAll('.closing-reveal'),
-          { opacity: 0, y: 30 },
+          headlineRef.current.querySelectorAll('.reveal-elem'),
+          { opacity: 0, y: 40 },
           {
             opacity: 1,
             y: 0,
-            duration: 0.85,
-            stagger: 0.15,
+            duration: 0.95,
+            stagger: 0.12,
             ease: 'power3.out',
             scrollTrigger: {
-              trigger: closingRef.current,
-              start: 'top 85%',
+              trigger: headlineRef.current,
+              start: 'top 82%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      }
+
+      // 3. Ultra-Modern Cards 3D Entrance Reveal
+      if (cardsRef.current) {
+        const cards = cardsRef.current.querySelectorAll('.challenge-card-item');
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 55, scale: 0.96 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.9,
+            stagger: 0.18,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: cardsRef.current,
+              start: 'top 78%',
               toggleActions: 'play none none none',
             },
           }
@@ -109,330 +110,338 @@ export const ChallengesSection: React.FC = () => {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, [language, circumference]);
-
-  const handleManualSelect = (idx: number) => {
-    setActiveChallengeIndex(idx);
-    const targetProgress = (idx + 0.5) / challenges.length;
-    setScrollProgress(targetProgress);
-    if (progressBarRef.current) {
-      gsap.to(progressBarRef.current, { scaleY: targetProgress, duration: 0.3 });
-    }
-  };
+  }, [language]);
 
   return (
     <section
       ref={sectionRef}
       id="about-guide"
-      className="relative w-full bg-gradient-to-b from-[#181311] via-[#201916] to-[#171210] text-[#F7F2EA] py-24 md:py-32 overflow-hidden border-t border-[#B99A61]/15"
+      className="relative w-full -mt-2 sm:-mt-4 pt-0 pb-28 md:pb-40 overflow-hidden transition-colors duration-700"
+      style={{
+        background: `
+          radial-gradient(ellipse 100% 60% at 50% 12%, #FFFFFF 0%, #FAF9F6 40%, #F5F3EF 75%, #EEEAE2 100%)
+        `,
+      }}
     >
-      {/* ATELIER BACKGROUND PATTERN & DRAFTING CURVES */}
-      <div className="absolute inset-0 pointer-events-none opacity-25 select-none" aria-hidden="true">
-        <svg
-          className="w-full h-full"
-          viewBox="0 0 1440 1000"
-          fill="none"
-          preserveAspectRatio="xMidYMid slice"
-        >
-          <defs>
-            <linearGradient id="draftLineGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#B99A61" stopOpacity="0" />
-              <stop offset="50%" stopColor="#D8BF8A" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#B99A61" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M -100 200 C 400 350, 700 150, 1500 400"
-            stroke="url(#draftLineGrad)"
-            strokeWidth="1"
-            strokeDasharray="4 6"
-          />
-          <path
-            d="M 100 900 C 500 700, 900 950, 1600 750"
-            stroke="url(#draftLineGrad)"
-            strokeWidth="1.2"
-          />
-        </svg>
+      {/* 
+        ========================================================================
+        SEAMLESS INTERLOCKING TRANSITION FROM HERO (سايحين على بعض ومتداخلين)
+        Deep organic atmospheric gradient bleed without any hard line or border
+        ========================================================================
+      */}
+      <div className="relative w-full overflow-hidden pointer-events-none select-none z-10">
+        {/* Layer 1: Atmospheric dark dissolve extending directly from Hero (#1B1513) */}
+        <div
+          className="w-full h-44 sm:h-56 md:h-72"
+          style={{
+            background: `
+              linear-gradient(180deg, 
+                #1B1513 0%, 
+                rgba(27, 21, 19, 0.96) 25%, 
+                rgba(27, 21, 19, 0.75) 50%, 
+                rgba(27, 21, 19, 0.35) 75%, 
+                rgba(27, 21, 19, 0.0) 100%
+              )
+            `,
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Layer 2: Radiant Golden Ambient Glow Beam at the exact intersection */}
+        <div
+          className="absolute -top-12 inset-x-0 h-64 md:h-80 mx-auto max-w-4xl opacity-75 blur-3xl"
+          style={{
+            background: 'radial-gradient(ellipse 70% 50% at 50% 30%, rgba(212, 175, 55, 0.35) 0%, rgba(212, 175, 55, 0.12) 50%, transparent 80%)',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Layer 3: Flowing Couture Atelier Silk Threads intertwining the two sections */}
+        <div className="absolute top-0 inset-x-0 h-64 opacity-35" aria-hidden="true">
+          <svg
+            className="w-full h-full"
+            viewBox="0 0 1440 280"
+            fill="none"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M -100 20 C 350 140, 750 -40, 1540 120"
+              stroke="#D4AF37"
+              strokeWidth="1.5"
+              strokeDasharray="6 8"
+            />
+            <path
+              d="M 50 200 C 450 60, 950 240, 1500 40"
+              stroke="#C29B38"
+              strokeWidth="1.2"
+              strokeOpacity="0.6"
+            />
+          </svg>
+        </div>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* 
+        ========================================================================
+        INTERLOCKING TRANSITION BRIDGE BADGE (المحور الانتقالي)
+        Physically bridges the dark Hero tone and the luminous Challenges tone
+        ========================================================================
+      */}
+      <div
+        ref={transitionBridgeRef}
+        className="relative z-20 -mt-20 sm:-mt-24 md:-mt-28 mb-12 sm:mb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
+      >
+        <div className="bridge-elem inline-flex items-center gap-3 px-5 py-2 rounded-full bg-[#181311]/90 border border-[#D4AF37]/50 shadow-[0_15px_35px_rgba(0,0,0,0.35)] backdrop-blur-xl">
+          <span className="w-2 h-2 rotate-45 bg-[#D4AF37] animate-pulse" />
+          <span className="text-xs sm:text-sm font-arabic-display tracking-wide text-[#F5DFB3] font-medium">
+            {isRtl ? 'المحطة الثانية: تفكيك تحديات السوق' : 'Phase 02: Deconstructing Industry Realities'}
+          </span>
+          <span className="w-2 h-2 rotate-45 bg-[#D4AF37] animate-pulse" />
+        </div>
+      </div>
+
+      {/* MAIN CONTAINER */}
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* SECTION HEADER: HIGH-IMPACT EDITORIAL TYPOGRAPHY */}
-        <div ref={headlineRef} className="max-w-4xl mx-auto text-center mb-16 md:mb-20">
-          {/* Eyebrow */}
-          <div className="reveal-elem inline-flex items-center gap-2 mb-4 text-xs font-editorial-serif tracking-[0.28em] text-[#B99A61] uppercase">
-            <span className="w-1.5 h-1.5 rotate-45 bg-[#B99A61]" />
-            <span className="font-arabic-display">{content.challenges.eyebrow}</span>
-            <span className="w-1.5 h-1.5 rotate-45 bg-[#B99A61]" />
+        {/* SECTION HEADER: HIGH-CONTRAST MONUMENTAL EDITORIAL */}
+        <div ref={headlineRef} className="max-w-4xl mx-auto text-center mb-14 md:mb-18">
+          {/* Section Eyebrow */}
+          <div className="reveal-elem inline-flex items-center gap-2.5 mb-4 px-4 py-1.5 rounded-full bg-white/80 border border-slate-200 shadow-sm text-xs font-editorial-serif tracking-[0.25em] text-[#B8860B] uppercase">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+            <span className="font-arabic-display font-bold">{content.challenges.eyebrow}</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
           </div>
 
-          {/* Monumental Headline */}
-          <h2 className="reveal-elem text-3xl sm:text-5xl md:text-6xl font-black font-arabic-display tracking-tight text-[#F7F2EA] leading-[1.18] mb-4 text-depth-arabic-title">
+          {/* Monumental Headline in Pure Jet Obsidian */}
+          <h2 className="reveal-elem text-3xl sm:text-5xl md:text-6xl font-black font-arabic-display tracking-tight text-[#09090B] leading-[1.18] mb-4">
             {content.challenges.mainHeadline}
           </h2>
 
-          {/* Supporting Headline */}
-          <p className="reveal-elem text-xl sm:text-2xl md:text-3xl font-arabic-calligraphy text-[#D8BF8A] mb-6 text-depth-arabic-calligraphy">
-            {content.challenges.supportingHeadline}
+          {/* Supporting Headline in Warm Radiant Calligraphy */}
+          <p className="reveal-elem text-xl sm:text-2xl md:text-3xl font-arabic-calligraphy text-[#B8860B] mb-5">
+            "{content.challenges.supportingHeadline}"
           </p>
 
-          {/* Intro Prose */}
-          <p className="reveal-elem text-sm sm:text-base md:text-lg text-[#E5DED1]/85 leading-relaxed max-w-2xl mx-auto">
+          {/* Intro Prose in Crisp Slate */}
+          <p className="reveal-elem text-sm sm:text-base md:text-lg text-[#4B5563] leading-relaxed max-w-2xl mx-auto font-light">
             {content.challenges.introText}
           </p>
-        </div>
 
-        {/* SCROLL-LINKED PROGRESS INDICATOR STRIP (Sticky & Prominent) */}
-        <div className="max-w-4xl mx-auto mb-8 md:mb-12 flex items-center justify-between p-3.5 sm:p-4 rounded-xl bg-[#241D1A]/80 border border-[#B99A61]/30 backdrop-blur-md shadow-xl">
-          
-          {/* Left: Interactive Circular Counter with SVG Stroke Progress */}
-          <div className="flex items-center gap-3.5">
-            <div className="relative w-14 h-14 shrink-0 flex items-center justify-center">
-              <svg className="w-14 h-14 -rotate-90 transform" viewBox="0 0 64 64">
-                {/* Background Track */}
-                <circle
-                  cx="32"
-                  cy="32"
-                  r={circleRadius}
-                  stroke="rgba(185, 154, 97, 0.2)"
-                  strokeWidth="3"
-                  fill="none"
-                />
-                {/* Animated Scroll Progress Ring */}
-                <circle
-                  ref={circularRingRef}
-                  cx="32"
-                  cy="32"
-                  r={circleRadius}
-                  stroke="#B99A61"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                  fill="none"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeOffset}
-                  className="transition-[stroke-dashoffset] duration-75"
-                />
-              </svg>
-              {/* Center Display Number */}
-              <span className="absolute font-editorial-serif font-extrabold text-sm sm:text-base text-[#F7F2EA]">
-                {currentChallenge.number}
-              </span>
-            </div>
-
-            <div>
-              <span className="text-[10px] font-editorial-serif tracking-widest text-[#B99A61] uppercase block">
-                {isRtl ? 'مؤشر التقدم في التحديات' : 'CHALLENGE PROGRESS'}
-              </span>
-              <span className="text-xs sm:text-sm font-arabic-display font-semibold text-white">
-                {currentChallenge.category}
-              </span>
-            </div>
-          </div>
-
-          {/* Right: Quick Segment Markers */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {challenges.map((ch, idx) => {
-              const isPastOrCurrent = idx <= activeChallengeIndex;
-              const isExactCurrent = idx === activeChallengeIndex;
-              return (
-                <button
-                  key={ch.id}
-                  onClick={() => handleManualSelect(idx)}
-                  className={`px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs font-editorial-serif font-bold transition-all duration-300 flex items-center gap-1.5 ${
-                    isExactCurrent
-                      ? 'bg-[#B99A61] text-[#140F0D] shadow-md shadow-[#B99A61]/30 scale-105'
-                      : isPastOrCurrent
-                      ? 'bg-[#B99A61]/20 border border-[#B99A61]/40 text-[#D8BF8A]'
-                      : 'bg-[#1D1714]/60 border border-[#B99A61]/15 text-[#8C7243] hover:text-[#D8BF8A]'
-                  }`}
-                  aria-label={`Jump to challenge ${ch.number}`}
-                >
-                  <span>{ch.number}</span>
-                  {isExactCurrent && <span className="w-1 h-1 rounded-full bg-[#140F0D]" />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* INTERACTIVE EDITORIAL CHALLENGES COMPOSITION */}
-        <div
-          ref={scrollTrackRef}
-          className="relative grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
-        >
-          {/* LEFT COLUMN: ACTIVE NUMBER COUNTER & ATELIER RULER NAVIGATION */}
-          <div className="lg:col-span-5 flex flex-col justify-between p-6 sm:p-8 md:p-10 rounded-2xl bg-[#261E1A]/60 border border-[#B99A61]/25 backdrop-blur-md shadow-2xl relative overflow-hidden">
-            
-            {/* Subtle background watermark */}
-            <div
-              className="absolute -bottom-10 -right-10 text-[180px] font-editorial-serif font-black text-[#B99A61]/5 select-none pointer-events-none leading-none"
-              aria-hidden="true"
+          {/* Interactive Modern Pill Filter Controls */}
+          <div className="reveal-elem flex items-center justify-center gap-2 mt-8 flex-wrap">
+            <button
+              onClick={() => setActiveFilter('all')}
+              className={`px-4 py-1.5 rounded-full text-xs font-arabic-display font-medium transition-all duration-300 ${
+                activeFilter === 'all'
+                  ? 'bg-[#09090B] text-white shadow-lg shadow-black/15 scale-105'
+                  : 'bg-white/80 text-slate-600 hover:text-black hover:bg-white border border-slate-200/80 shadow-sm'
+              }`}
             >
-              {currentChallenge.number}
-            </div>
-
-            <div>
-              {/* Dynamic Number Crest */}
-              <div className="flex items-baseline gap-3 mb-6 pb-6 border-b border-[#B99A61]/20">
-                <span className="text-6xl sm:text-7xl font-editorial-serif font-extrabold text-[#D8BF8A] tracking-tighter">
-                  {currentChallenge.number}
+              {isRtl ? 'جميع التحديات الثلاثة' : 'All Three Challenges'}
+            </button>
+            {challenges.map((ch) => (
+              <button
+                key={ch.id}
+                onClick={() => setActiveFilter(ch.number as '01' | '02' | '03')}
+                className={`px-4 py-1.5 rounded-full text-xs font-arabic-display font-medium transition-all duration-300 flex items-center gap-1.5 ${
+                  activeFilter === ch.number
+                    ? 'bg-[#09090B] text-[#F3DEB2] shadow-lg shadow-black/15 scale-105 border border-[#D4AF37]/50'
+                    : 'bg-white/80 text-slate-600 hover:text-black hover:bg-white border border-slate-200/80 shadow-sm'
+                }`}
+              >
+                <span className="font-editorial-serif font-bold text-[11px] text-[#B8860B]">
+                  {ch.number}
                 </span>
-                <span className="text-xl sm:text-2xl font-editorial-serif text-[#B99A61]/40">
-                  / 03
-                </span>
-                <span className="ms-auto text-xs font-arabic-display text-[#B99A61] tracking-wider uppercase font-semibold">
-                  {currentChallenge.category}
-                </span>
-              </div>
-
-              {/* Atelier Progress Segment Buttons */}
-              <div className="space-y-3 mb-8" role="tablist" aria-label="Challenge selection">
-                {challenges.map((ch, idx) => {
-                  const isActive = idx === activeChallengeIndex;
-                  return (
-                    <button
-                      key={ch.id}
-                      role="tab"
-                      aria-selected={isActive}
-                      onClick={() => handleManualSelect(idx)}
-                      className={`w-full text-start p-4 rounded-xl transition-all duration-300 flex items-center justify-between group ${
-                        isActive
-                          ? 'bg-[#B99A61]/15 border border-[#B99A61]/60 text-white shadow-lg'
-                          : 'bg-[#1D1714]/40 border border-transparent hover:border-[#B99A61]/30 text-[#D8BF8A]/70 hover:text-[#F7F2EA]'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3.5">
-                        <span
-                          className={`font-editorial-serif text-sm font-bold ${
-                            isActive ? 'text-[#B99A61]' : 'text-[#8C7243]'
-                          }`}
-                        >
-                          {ch.number}
-                        </span>
-                        <span className="font-arabic-display text-sm sm:text-base font-semibold">
-                          {ch.question}
-                        </span>
-                      </div>
-                      <span
-                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                          isActive ? 'bg-[#B99A61] scale-125' : 'bg-transparent border border-[#B99A61]/40'
-                        }`}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Atelier Trust Footnote with Live Scroll Percent */}
-            <div className="pt-4 border-t border-[#B99A61]/15 flex items-center justify-between text-xs text-[#D8BF8A]/80">
-              <div className="flex items-center gap-2">
-                <Compass className="w-4 h-4 text-[#B99A61] shrink-0" />
-                <span>
-                  {isRtl
-                    ? 'قرارات استراتيجية تم اختبارها عملياً'
-                    : 'Field-tested strategic decisions'}
-                </span>
-              </div>
-              <span className="font-editorial-serif font-bold text-[#B99A61] tabular-nums">
-                {Math.round(scrollProgress * 100)}%
-              </span>
-            </div>
+                <span>{ch.category}</span>
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* RIGHT COLUMN: MAIN EXPANDED CHALLENGE EDITORIAL SHOWCASE */}
-          <div className="lg:col-span-7 flex flex-col justify-between p-8 sm:p-10 md:p-12 rounded-2xl bg-gradient-to-br from-[#29201C] via-[#211A17] to-[#1A1412] border border-[#B99A61]/35 shadow-2xl relative overflow-hidden">
-            
-            {/* Top Fashion Needle & Thread SVG Graphic */}
-            <div className="absolute top-6 end-8 pointer-events-none opacity-40">
-              <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
-                <circle cx="30" cy="30" r="28" stroke="#B99A61" strokeWidth="0.75" strokeDasharray="3 3" />
-                <path d="M 20 40 L 40 20" stroke="#D8BF8A" strokeWidth="1.5" />
-                <circle cx="40" cy="20" r="2" fill="#B99A61" />
-              </svg>
-            </div>
+        {/* 
+          ========================================================================
+          ULTRA-MODERN 3-CARD EDITORIAL SHOWCASE
+          Architectural Crystal Glass Cards with Interactive Mouse Spotlight
+          ========================================================================
+        */}
+        <div
+          ref={cardsRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch"
+        >
+          {challenges.map((ch, idx) => {
+            const isVisible = activeFilter === 'all' || activeFilter === ch.number;
+            const isHovered = hoveredCard === idx;
+            const pos = mousePos[idx] || { x: 0, y: 0 };
 
-            <div>
-              {/* Category Kicker */}
-              <div className="flex items-center gap-2 mb-4">
-                <span className="w-2 h-[1px] bg-[#B99A61]" />
-                <span className="text-xs font-editorial-serif tracking-widest text-[#B99A61] uppercase">
-                  {currentChallenge.category}
-                </span>
-              </div>
+            if (!isVisible) return null;
 
-              {/* Primary Question (Monumental Display) */}
-              <h3 className="text-2xl sm:text-4xl md:text-5xl font-bold font-arabic-display text-white leading-tight mb-6 text-depth-arabic-title">
-                "{currentChallenge.question}"
-              </h3>
+            return (
+              <div
+                key={ch.id}
+                onMouseEnter={() => setHoveredCard(idx)}
+                onMouseLeave={() => setHoveredCard(null)}
+                onMouseMove={(e) => handleMouseMove(e, idx)}
+                className={`challenge-card-item group relative flex flex-col justify-between rounded-3xl p-7 sm:p-8 transition-all duration-500 overflow-hidden cursor-default ${
+                  isHovered
+                    ? '-translate-y-2 shadow-[0_30px_60px_-15px_rgba(212,175,55,0.22)] border-[#D4AF37]/60'
+                    : 'shadow-[0_20px_45px_-12px_rgba(15,23,42,0.08)] border-white/90 hover:border-slate-300'
+                } bg-white/85 backdrop-blur-2xl border`}
+                style={{
+                  background: isHovered
+                    ? `radial-gradient(600px circle at ${pos.x}px ${pos.y}px, rgba(255,255,255,0.98), rgba(250,248,244,0.92))`
+                    : 'rgba(255, 255, 255, 0.88)',
+                }}
+              >
+                {/* Luminous Mouse-Follow Ambient Spotlight Glow */}
+                <div
+                  className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  style={{
+                    background: `radial-gradient(400px circle at ${pos.x}px ${pos.y}px, rgba(212, 175, 55, 0.18), transparent 60%)`,
+                  }}
+                  aria-hidden="true"
+                />
 
-              {/* Supporting Editorial Paragraph */}
-              <p className="text-base sm:text-lg md:text-xl text-[#F7F2EA]/90 leading-relaxed mb-8 font-arabic-display font-light">
-                {currentChallenge.supporting}
-              </p>
+                {/* Oversized Background Watermark Numeral */}
+                <div
+                  className="absolute -bottom-6 -right-4 font-editorial-serif font-black text-[120px] text-slate-900/[0.03] select-none pointer-events-none leading-none transition-transform duration-700 group-hover:scale-110 group-hover:text-[#D4AF37]/[0.06]"
+                  aria-hidden="true"
+                >
+                  {ch.number}
+                </div>
 
-              {/* Deep Actionable Insight Box */}
-              {currentChallenge.detailNote && (
-                <div className="p-5 sm:p-6 rounded-xl bg-[#1B1513]/70 border-r-2 rtl:border-r-2 ltr:border-l-2 rtl:border-l-0 border-[#B99A61] mb-8">
-                  <div className="flex items-center gap-2 mb-2 text-[#D8BF8A]">
-                    <Sparkles className="w-4 h-4 text-[#B99A61]" />
-                    <span className="text-xs font-semibold font-arabic-display">
-                      {isRtl ? 'الواقع الميداني في السوق' : 'Market Reality Insight'}
-                    </span>
+                {/* TOP ROW: Badge, Category, and Index */}
+                <div>
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-[#09090B] text-white flex items-center justify-center font-editorial-serif font-bold text-sm shadow-md shadow-black/15 group-hover:bg-[#D4AF37] group-hover:text-[#09090B] transition-colors duration-300">
+                        {ch.number}
+                      </div>
+                      <span className="text-xs font-arabic-display font-semibold text-[#B8860B] tracking-wide">
+                        {ch.category}
+                      </span>
+                    </div>
+
+                    {/* Micro-Icon */}
+                    <div className="w-8 h-8 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 group-hover:text-[#B8860B] group-hover:border-[#D4AF37]/40 transition-colors">
+                      {idx === 0 && <DollarSign className="w-4 h-4" />}
+                      {idx === 1 && <Layers className="w-4 h-4" />}
+                      {idx === 2 && <Store className="w-4 h-4" />}
+                    </div>
                   </div>
-                  <p className="text-xs sm:text-sm text-[#E5DED1]/80 leading-relaxed">
-                    {currentChallenge.detailNote}
+
+                  {/* Primary Question (The Core Pain Point) */}
+                  <h3 className="text-2xl sm:text-3xl font-extrabold font-arabic-display text-[#09090B] leading-snug mb-4 group-hover:text-black transition-colors">
+                    "{ch.question}"
+                  </h3>
+
+                  {/* Supporting Dilemma Copy */}
+                  <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed mb-6 font-light">
+                    {ch.supporting}
                   </p>
                 </div>
-              )}
-            </div>
 
-            {/* Stepper Navigation Controls */}
-            <div className="pt-6 border-t border-[#B99A61]/20 flex items-center justify-between">
-              <span className="text-xs text-[#D8BF8A]/70 font-editorial-serif tracking-wider">
-                {isRtl ? `التحدي ${activeChallengeIndex + 1} من 3` : `Challenge ${activeChallengeIndex + 1} of 3`}
-              </span>
+                {/* 
+                  ==============================================================
+                  INTERACTIVE BESPOKE MICRO-WIDGET FOR EACH CHALLENGE
+                  Provides tangible, domain-specific visual richness
+                  ==============================================================
+                */}
+                <div className="my-2 space-y-4">
+                  {/* Card 01: Pricing Architecture Breakdown */}
+                  {idx === 0 && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-[#FAF6EE] border border-slate-200/90 shadow-inner">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+                        <span className="font-arabic-display">{isRtl ? 'هيكلة السعر الاحترافي' : 'Pricing Architecture'}</span>
+                        <span className="text-[#B8860B] font-editorial-serif font-bold">100% Value</span>
+                      </div>
+                      {/* Visual Formula Progress Bar */}
+                      <div className="h-2 w-full rounded-full bg-slate-200 overflow-hidden flex mb-2.5">
+                        <div className="bg-[#09090B] h-full w-[35%]" title="Materials 35%" />
+                        <div className="bg-[#B8860B] h-full w-[25%]" title="Craftsmanship 25%" />
+                        <div className="bg-[#D4AF37] h-full w-[40%]" title="Brand Equity & Margin 40%" />
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-slate-500">
+                        <span>{isRtl ? 'خامات (35%)' : 'Fabrics'}</span>
+                        <span>{isRtl ? 'قص وتنفيذ (25%)' : 'Craft'}</span>
+                        <span className="font-bold text-[#09090B]">{isRtl ? 'هامش ربح (40%)' : 'Margin'}</span>
+                      </div>
+                    </div>
+                  )}
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleManualSelect(activeChallengeIndex > 0 ? activeChallengeIndex - 1 : challenges.length - 1)}
-                  className="px-3.5 py-1.5 rounded-lg border border-[#B99A61]/30 hover:border-[#B99A61] text-xs text-[#D8BF8A] hover:text-white transition-colors"
-                  aria-label="Previous challenge"
-                >
-                  {isRtl ? 'السابق' : 'Previous'}
-                </button>
-                <button
-                  onClick={() => handleManualSelect(activeChallengeIndex < challenges.length - 1 ? activeChallengeIndex + 1 : 0)}
-                  className="px-4 py-1.5 rounded-lg bg-[#B99A61] text-[#140F0D] font-bold text-xs hover:bg-[#D8BF8A] transition-colors"
-                  aria-label="Next challenge"
-                >
-                  {isRtl ? 'التالي' : 'Next'}
-                </button>
+                  {/* Card 02: Supplier & Fabric Sourcing Verification */}
+                  {idx === 1 && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-[#FAF6EE] border border-slate-200/90 shadow-inner">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+                        <span className="font-arabic-display">{isRtl ? 'معايير اختيار الموردين' : 'Supplier Verification'}</span>
+                        <ShieldCheck className="w-4 h-4 text-[#B8860B]" />
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-white border border-slate-200/80">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                          <span>{isRtl ? 'فحص عيّنات الأقمشة' : 'Fabric Swatch Test'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 p-1.5 rounded-lg bg-white border border-slate-200/80">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                          <span>{isRtl ? 'اعتماد خياطة المشغل' : 'Atelier Stitch QC'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Card 03: Business Model Compass (Online vs Studio) */}
+                  {idx === 2 && (
+                    <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-50 to-[#FAF6EE] border border-slate-200/90 shadow-inner">
+                      <div className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-2">
+                        <span className="font-arabic-display">{isRtl ? 'مصفوفة القرار الاستراتيجي' : 'Strategic Model Matrix'}</span>
+                        <Compass className="w-4 h-4 text-[#B8860B]" />
+                      </div>
+                      <div className="flex items-center justify-between gap-2 text-[11px]">
+                        <div className="flex-1 text-center p-2 rounded-lg bg-white border border-slate-200/80">
+                          <span className="block font-bold text-[#09090B] mb-0.5">{isRtl ? 'أونلاين' : 'Online'}</span>
+                          <span className="text-slate-500 text-[10px]">{isRtl ? 'مرونة وتكلفة أقل' : 'Lean & Agile'}</span>
+                        </div>
+                        <span className="text-slate-400 font-bold">vs</span>
+                        <div className="flex-1 text-center p-2 rounded-lg bg-white border border-slate-200/80">
+                          <span className="block font-bold text-[#09090B] mb-0.5">{isRtl ? 'أتيليه' : 'Atelier'}</span>
+                          <span className="text-slate-500 text-[10px]">{isRtl ? 'تجربة حية وهيبة' : 'Prestige Experience'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Field Reality Insight Badge ("الواقع الميداني في السوق") */}
+                  {ch.detailNote && (
+                    <div className="p-3.5 sm:p-4 rounded-xl bg-white border border-[#D4AF37]/30 shadow-sm relative overflow-hidden">
+                      <div className="flex items-center gap-1.5 mb-1.5 text-[#B8860B]">
+                        <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+                        <span className="text-xs font-bold font-arabic-display">
+                          {isRtl ? 'الحقيقة من واقع السوق' : 'Field Reality Insight'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#4B5563] leading-relaxed">
+                        {ch.detailNote}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* BOTTOM FOOTER: Atelier Assurance Link */}
+                <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between text-xs">
+                  <span className="text-slate-400 font-editorial-serif tracking-wider font-medium">
+                    Atelier Munira · Case #{ch.number}
+                  </span>
+                  <button
+                    onClick={() => {
+                      document.getElementById('book-preview')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-1 font-semibold text-[#09090B] group-hover:text-[#B8860B] transition-colors"
+                  >
+                    <span>{isRtl ? 'الحل داخل الدليل' : 'Solution in Guide'}</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </button>
+                </div>
               </div>
-            </div>
-
-          </div>
-        </div>
-
-        {/* CLOSING STATEMENT & NATURAL TEASER TO SECTION 3 */}
-        <div
-          ref={closingRef}
-          className="mt-20 md:mt-28 pt-12 border-t border-[#B99A61]/20 text-center max-w-3xl mx-auto"
-        >
-          {/* Closing Statement */}
-          <p className="closing-reveal text-xl sm:text-2xl md:text-3xl font-arabic-calligraphy text-[#F7F2EA] leading-relaxed mb-8 text-depth-arabic-calligraphy">
-            "{content.challenges.closingStatement}"
-          </p>
-
-          {/* Curiosity Teaser into Future Section 3 */}
-          <div className="closing-reveal inline-flex flex-col items-center gap-3 group">
-            <span className="text-sm sm:text-base font-semibold font-arabic-display text-[#D8BF8A] group-hover:text-white transition-colors">
-              {content.challenges.nextSectionTeaser}
-            </span>
-            <div className="w-8 h-8 rounded-full border border-[#B99A61]/40 flex items-center justify-center text-[#B99A61] animate-bounce">
-              <ArrowDown className="w-4 h-4" />
-            </div>
-          </div>
+            );
+          })}
         </div>
 
       </div>

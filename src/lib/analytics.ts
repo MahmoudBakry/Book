@@ -5,6 +5,7 @@ export type AnalyticsEventName =
   | 'view_item'
   | 'select_buy_cta'
   | 'explore_chapters_cta'
+  | 'preview_page_viewed'
   | 'begin_checkout'
   | 'payment_proof_submitted'
   | 'purchase';

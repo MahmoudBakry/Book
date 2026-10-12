@@ -42,7 +42,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPreorder }) => {
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#181311]/90 backdrop-blur-md border-b border-[#B99A61]/20 py-3 shadow-lg shadow-black/40'
+          ? 'bg-[#09090B]/90 backdrop-blur-xl border-b border-white/[0.08] py-3 shadow-2xl shadow-black/30'
           : 'bg-transparent py-5 md:py-6'
       }`}
     >
@@ -80,17 +80,15 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPreorder }) => {
           </nav>
 
           {/* ZONE 3: LANGUAGE SWITCHER + 1 PRIMARY ACTION (CTA) */}
-          <div className="flex items-center gap-3 md:gap-4 shrink-0">
-            {/* Language Switcher */}
+          <div className="flex items-center gap-2.5 sm:gap-3.5 shrink-0">
+            {/* Simplified & Modern Language Switcher */}
             <LanguageSwitcher className="hidden sm:inline-flex" />
 
-            {/* Primary Buy CTA */}
+            {/* Simple & Attractive Primary Buy CTA */}
             <CTAButton
-              size="sm"
-              variant="primary"
+              variant="navbar"
               onClick={handleCtaClick}
               isRtl={isRtl}
-              className="text-xs md:text-sm"
             >
               {content.nav.ctaButton}
             </CTAButton>
@@ -138,10 +136,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenPreorder }) => {
 
             <div className="pt-4 border-t border-[#B99A61]/20">
               <CTAButton
-                variant="primary"
+                variant="navbar"
                 onClick={handleCtaClick}
                 isRtl={isRtl}
-                className="w-full text-center"
+                className="w-full text-center py-3 text-sm font-bold"
               >
                 {content.nav.ctaButton} — {content.hero.priceFormatted}
               </CTAButton>

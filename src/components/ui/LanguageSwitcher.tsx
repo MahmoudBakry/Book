@@ -1,44 +1,39 @@
 import React from 'react';
 import { useLanguage } from '../../hooks/useLanguage';
-import { Globe } from 'lucide-react';
 
 interface LanguageSwitcherProps {
   className?: string;
 }
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ className = '' }) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, toggleLanguage } = useLanguage();
 
   return (
-    <div
-      className={`inline-flex items-center gap-1.5 p-1 rounded-md bg-[#241D1A]/60 border border-[#B99A61]/25 backdrop-blur-md ${className}`}
-      role="group"
-      aria-label="Language selection"
+    <button
+      onClick={toggleLanguage}
+      className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs transition-all duration-300 border border-white/15 bg-white/[0.05] hover:bg-white/[0.1] hover:border-white/25 backdrop-blur-md select-none ${className}`}
+      aria-label={language === 'ar' ? 'Switch to English' : 'التحويل إلى اللغة العربية'}
+      title={language === 'ar' ? 'English' : 'العربية'}
     >
-      <Globe className="w-3.5 h-3.5 text-[#B99A61] ml-1 mr-0.5 shrink-0" aria-hidden="true" />
-      <button
-        onClick={() => setLanguage('ar')}
-        className={`px-2.5 py-1 text-xs font-medium rounded transition-all duration-200 ${
+      <span
+        className={`transition-colors duration-200 ${
           language === 'ar'
-            ? 'bg-[#B99A61] text-[#161210] font-semibold shadow-sm'
-            : 'text-[#D8BF8A] hover:text-[#F7F2EA]'
+            ? 'text-[#F5DFB5] font-bold font-arabic-display text-[12px]'
+            : 'text-neutral-400 hover:text-neutral-200 text-[11px]'
         }`}
-        aria-pressed={language === 'ar'}
       >
-        العربية
-      </button>
-      <span className="text-[#B99A61]/30 text-xs">/</span>
-      <button
-        onClick={() => setLanguage('en')}
-        className={`px-2.5 py-1 text-xs font-editorial-serif tracking-wider uppercase transition-all duration-200 rounded ${
+        عربي
+      </span>
+      <span className="text-white/20 text-[10px] select-none font-light">|</span>
+      <span
+        className={`font-editorial-serif tracking-widest text-[11px] transition-colors duration-200 ${
           language === 'en'
-            ? 'bg-[#B99A61] text-[#161210] font-semibold shadow-sm'
-            : 'text-[#D8BF8A] hover:text-[#F7F2EA]'
+            ? 'text-[#F5DFB5] font-bold'
+            : 'text-neutral-400 hover:text-neutral-200'
         }`}
-        aria-pressed={language === 'en'}
       >
         EN
-      </button>
-    </div>
+      </span>
+    </button>
   );
 };

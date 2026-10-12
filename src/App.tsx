@@ -8,7 +8,7 @@ import { LanguageProvider, useLanguage } from './i18n/LanguageContext';
 import { Navbar } from './components/layout/Navbar';
 import { HeroSection } from './components/sections/HeroSection';
 import { ChallengesSection } from './components/sections/ChallengesSection';
-import { ChaptersSection } from './components/sections/ChaptersSection';
+import { BookPreviewSection } from './components/sections/BookPreviewSection';
 import { PreorderDrawer } from './components/ui/PreorderDrawer';
 import { captureAttribution, trackEvent } from './lib/analytics';
 
@@ -28,7 +28,7 @@ function MainLayout() {
   }, [isRtl]);
 
   return (
-    <div className="relative min-h-screen bg-[#181311] text-[#F7F2EA] flex flex-col selection:bg-[#B99A61]/30 selection:text-[#F7F2EA]">
+    <div className="relative min-h-screen bg-[#1B1513] text-[#F7F2EA] flex flex-col selection:bg-[#B99A61]/30 selection:text-[#F7F2EA]">
       {/* Premium Top Navbar */}
       <Navbar onOpenPreorder={() => setIsPreorderOpen(true)} />
 
@@ -40,8 +40,8 @@ function MainLayout() {
         {/* Section 2: Interactive Challenges / Pain Points */}
         <ChallengesSection />
 
-        {/* Section 3: Interactive Editorial Chapter Showcase */}
-        <ChaptersSection onOpenPreorder={() => setIsPreorderOpen(true)} />
+        {/* Section 4: Cinematic Interactive Book Preview */}
+        <BookPreviewSection onOpenPreorder={() => setIsPreorderOpen(true)} />
       </main>
 
       {/* Conversion-Focused Checkout & Priority Reservation Drawer */}

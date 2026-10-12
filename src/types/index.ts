@@ -90,6 +90,41 @@ export interface ChaptersShowcaseContent {
   ctaSubtext: string;
 }
 
+export interface BookPreviewPageItem {
+  id: string;
+  pageNumber: number;
+  label: string;
+  chapterTitle: string;
+  summaryQuote: string;
+  highlights: string[];
+  image: string;
+  isSamplePlaceholder: boolean;
+}
+
+export interface BookPreviewSectionContent {
+  eyebrow: string;
+  scene1: {
+    headline: string;
+    secondaryLine: string;
+    caption: string;
+  };
+  scene2: {
+    headline: string;
+    supportingCopy: string;
+    sketchNotes: string[];
+  };
+  scene3: {
+    headline: string;
+    supportingCopy: string;
+    readerNotice: string;
+    ctaButton: string;
+    priceFormatted: string;
+    originalPriceFormatted: string;
+    savingsBadge: string;
+  };
+  samplePages: BookPreviewPageItem[];
+}
+
 export interface SiteContent {
   brand: {
     name: string;
@@ -108,6 +143,7 @@ export interface SiteContent {
   hero: HeroContent;
   challenges: ChallengesContent;
   chaptersShowcase: ChaptersShowcaseContent;
+  bookPreview: BookPreviewSectionContent;
   drawer: {
     title: string;
     subtitle: string;

@@ -84,10 +84,10 @@ export const AnimatedBook: React.FC<AnimatedBookProps> = ({
   const lightCenterSecondaryX = 50 - activeMouseX * 18;
   const lightCenterSecondaryY = 58 - activeMouseY * 14;
 
-  const dynamicGoldIntensity = 0.24 + Math.abs(activeMouseX) * 0.12;
-  const dynamicRoseIntensity = 0.16 + Math.max(0, -activeMouseX) * 0.14;
-  const dynamicCocoaIntensity = 0.26 + Math.max(0, activeMouseY) * 0.12;
-  const meshOpacity = isHovered ? 0.95 : 0.72 + Math.min(0.2, Math.abs(activeMouseX) * 0.15 + Math.abs(activeMouseY) * 0.15);
+  const dynamicGoldIntensity = 0.32 + Math.abs(activeMouseX) * 0.15;
+  const dynamicRoseIntensity = 0.22 + Math.max(0, -activeMouseX) * 0.15;
+  const dynamicCocoaIntensity = 0.32 + Math.max(0, activeMouseY) * 0.15;
+  const meshOpacity = isHovered ? 0.98 : 0.82 + Math.min(0.18, Math.abs(activeMouseX) * 0.15 + Math.abs(activeMouseY) * 0.15);
 
   return (
     <div
@@ -122,16 +122,16 @@ export const AnimatedBook: React.FC<AnimatedBookProps> = ({
       >
         {/* Book Realistic Shadow underneath */}
         <div
-          className="absolute -bottom-10 md:-bottom-14 left-1/2 -translate-x-1/2 w-[85%] h-12 md:h-16 rounded-[100%] pointer-events-none transition-all duration-500"
+          className="absolute -bottom-8 md:-bottom-10 left-1/2 -translate-x-1/2 w-[85%] h-10 md:h-12 rounded-[100%] pointer-events-none transition-all duration-500"
           style={{
             background: 'radial-gradient(ellipse at center, rgba(10, 8, 7, 0.85) 0%, rgba(18, 14, 12, 0.45) 50%, transparent 80%)',
-            transform: `translateZ(-60px) rotateX(90deg) scale(${isHovered ? 1.1 : 1})`,
-            filter: 'blur(10px)',
+            transform: `translateZ(-50px) rotateX(90deg) scale(${isHovered ? 1.1 : 1})`,
+            filter: 'blur(8px)',
           }}
         />
 
         {/* 3D Physical Book Structure: Front Cover, Spine, Gilded Pages Block */}
-        <div className="relative w-[280px] sm:w-[320px] md:w-[370px] lg:w-[410px] aspect-[1/1.42] rounded-[4px] preserve-3d cursor-pointer shadow-2xl group">
+        <div className="relative w-[240px] sm:w-[275px] md:w-[315px] lg:w-[350px] aspect-[1/1.42] rounded-[4px] preserve-3d cursor-pointer shadow-2xl group transition-all duration-300">
           
           {/* FRONT COVER */}
           <div
@@ -160,33 +160,33 @@ export const AnimatedBook: React.FC<AnimatedBookProps> = ({
             />
 
             {/* Fine Luxury Double Gold Border (Exact reproduction of uploaded cover) */}
-            <div className="absolute inset-3 md:inset-4 border border-[#B99A61]/50 pointer-events-none">
+            <div className="absolute inset-2.5 md:inset-3 border border-[#B99A61]/50 pointer-events-none">
               <div className="absolute inset-1 border border-[#B99A61]/25">
                 {/* Diamond Corner Accents */}
-                <div className="absolute -top-1.5 -left-1.5 w-3 h-3 border border-[#B99A61] rotate-45 bg-[#231B18]" />
-                <div className="absolute -top-1.5 -right-1.5 w-3 h-3 border border-[#B99A61] rotate-45 bg-[#231B18]" />
-                <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 border border-[#B99A61] rotate-45 bg-[#231B18]" />
-                <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 border border-[#B99A61] rotate-45 bg-[#231B18]" />
+                <div className="absolute -top-1 -left-1 w-2.5 h-2.5 border border-[#B99A61] rotate-45 bg-[#231B18]" />
+                <div className="absolute -top-1 -right-1 w-2.5 h-2.5 border border-[#B99A61] rotate-45 bg-[#231B18]" />
+                <div className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border border-[#B99A61] rotate-45 bg-[#231B18]" />
+                <div className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border border-[#B99A61] rotate-45 bg-[#231B18]" />
               </div>
             </div>
 
             {/* Book Spine Crease Shadow (Left side in LTR, Right side in RTL - book has spine on left in 3D) */}
             <div
-              className="absolute left-0 top-0 bottom-0 w-8 pointer-events-none z-10"
+              className="absolute left-0 top-0 bottom-0 w-7 pointer-events-none z-10"
               style={{
                 background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)',
               }}
             />
             {/* Book Spine Embossed Ridge Line */}
-            <div className="absolute left-6 top-0 bottom-0 w-[1px] bg-[#B99A61]/20 pointer-events-none z-10" />
+            <div className="absolute left-5 top-0 bottom-0 w-[1px] bg-[#B99A61]/20 pointer-events-none z-10" />
 
             {/* Book Cover Typography & Layout Content */}
-            <div className="relative z-10 h-full flex flex-col justify-between items-center text-center px-6 py-8 md:px-8 md:py-10">
+            <div className="relative z-10 h-full flex flex-col justify-between items-center text-center px-4 py-6 md:px-6 md:py-7">
               
               {/* TOP HEADER: Special Edition & Brand */}
-              <div className="pt-2">
-                <div className="flex items-center justify-center gap-2 text-[10px] md:text-[12px] tracking-[0.28em] font-editorial-serif text-[#D4B77D]">
-                  <span className="font-arabic-calligraphy text-xs md:text-sm tracking-normal">إصدار خاص</span>
+              <div className="pt-1">
+                <div className="flex items-center justify-center gap-1.5 text-[9px] md:text-[11px] tracking-[0.24em] font-editorial-serif text-[#D4B77D]">
+                  <span className="font-arabic-calligraphy text-[11px] md:text-xs tracking-normal">إصدار خاص</span>
                   <span className="text-[#B99A61]">·</span>
                   <span className="font-editorial-serif uppercase">MUNIRA ALHARBI</span>
                 </div>
@@ -195,49 +195,49 @@ export const AnimatedBook: React.FC<AnimatedBookProps> = ({
               {/* CENTER: Brand Monogram & Book Main Title */}
               <div className="flex flex-col items-center my-auto w-full">
                 {/* Brand Monogram */}
-                <div className="mb-4 transform transition-transform duration-500 group-hover:scale-105">
-                  <BrandMonogram size={56} />
+                <div className="mb-2 sm:mb-3 transform transition-transform duration-500 group-hover:scale-105">
+                  <BrandMonogram size={44} />
                 </div>
 
                 {/* Brand Name Lockup */}
-                <div className="mb-6 flex flex-col items-center">
-                  <span className="font-editorial-serif text-[18px] md:text-[22px] tracking-[0.25em] font-medium text-[#F7F2EA] leading-none">
+                <div className="mb-3 sm:mb-4 flex flex-col items-center">
+                  <span className="font-editorial-serif text-[15px] md:text-[18px] tracking-[0.22em] font-medium text-[#F7F2EA] leading-none">
                     MUNIRA
                   </span>
-                  <span className="font-editorial-serif text-[12px] md:text-[14px] tracking-[0.28em] text-[#B99A61] mt-1">
+                  <span className="font-editorial-serif text-[10px] md:text-[12px] tracking-[0.25em] text-[#B99A61] mt-0.5">
                     ALHARBI
                   </span>
                 </div>
 
                 {/* Main Book Title (Large Arabic Display Calligraphy) */}
                 <div className="flex flex-col items-center">
-                  <h2 className="font-arabic-display text-[26px] sm:text-[30px] md:text-[36px] font-bold text-white tracking-wide leading-tight drop-shadow-md">
+                  <h2 className="font-arabic-display text-[22px] sm:text-[25px] md:text-[29px] font-bold text-white tracking-wide leading-tight drop-shadow-md">
                     دليل نجاح
                   </h2>
-                  <h2 className="font-arabic-display text-[26px] sm:text-[30px] md:text-[36px] font-bold text-white tracking-wide leading-tight mt-0.5 drop-shadow-md">
+                  <h2 className="font-arabic-display text-[22px] sm:text-[25px] md:text-[29px] font-bold text-white tracking-wide leading-tight mt-0.5 drop-shadow-md">
                     مشروع الأزياء
                   </h2>
                 </div>
 
                 {/* Golden Diamond Divider */}
-                <div className="flex items-center justify-center gap-3 w-40 my-4 md:my-5">
+                <div className="flex items-center justify-center gap-2.5 w-32 my-2.5 md:my-3">
                   <div className="h-[1px] flex-1 bg-gradient-to-r from-transparent via-[#B99A61]/70 to-[#B99A61]" />
-                  <div className="w-2 h-2 rotate-45 bg-[#B99A61]" />
+                  <div className="w-1.5 h-1.5 rotate-45 bg-[#B99A61]" />
                   <div className="h-[1px] flex-1 bg-gradient-to-l from-transparent via-[#B99A61]/70 to-[#B99A61]" />
                 </div>
 
                 {/* Subtitle */}
-                <p className="font-arabic-calligraphy text-[15px] sm:text-[17px] md:text-[19px] text-[#D8BF8A] leading-relaxed">
+                <p className="font-arabic-calligraphy text-[13px] sm:text-[14px] md:text-[16px] text-[#D8BF8A] leading-relaxed">
                   خلاصة أكثر من 20 عامًا من الخبرة
                 </p>
               </div>
 
               {/* BOTTOM: Author Attribution */}
-              <div className="pb-1 flex flex-col items-center text-center">
-                <span className="text-[10px] md:text-[11px] font-arabic-display text-[#B99A61]/80 tracking-wider">
+              <div className="pb-0.5 flex flex-col items-center text-center">
+                <span className="text-[9px] md:text-[10px] font-arabic-display text-[#B99A61]/80 tracking-wider">
                   إعداد
                 </span>
-                <span className="font-arabic-display text-[13px] md:text-[15px] font-medium text-[#F7F2EA] mt-0.5 tracking-wide">
+                <span className="font-arabic-display text-[11px] md:text-[13px] font-medium text-[#F7F2EA] mt-0.5 tracking-wide">
                   المصممة منيرة الحربي
                 </span>
               </div>

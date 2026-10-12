@@ -22,7 +22,7 @@
   }
 
   body {
-    background-color: #181311;
+    background-color: #1C1614;
     color: #F7F2EA;
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
@@ -30,6 +30,17 @@
   [dir="rtl"] body {
     font-family: 'Alexandria', 'Plus Jakarta Sans', sans-serif;
   }
+}
+
+/* Studio Overhead Radiant Glow Utilities */
+.studio-glow-spotlight {
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(245, 223, 181, 0.28) 0%, rgba(185, 154, 97, 0.14) 40%, transparent 75%);
+}
+
+.luminous-card {
+  background: linear-gradient(145deg, rgba(46, 36, 31, 0.85) 0%, rgba(33, 25, 22, 0.9) 100%);
+  border: 1px solid rgba(216, 191, 138, 0.35);
+  box-shadow: 0 15px 40px -10px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(245, 223, 181, 0.22);
 }
 
 /* Typography Utility Classes */
@@ -75,6 +86,84 @@
   background: linear-gradient(135deg, #F3DEB2 0%, #B99A61 50%, #8E7039 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+/* Glassy & Glowy Luxury Atelier Panels */
+.glass-panel-light, .glass-crystal {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 20px 45px -15px rgba(15, 23, 42, 0.07),
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 1);
+}
+
+.glass-crystal-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 
+    0 15px 35px -10px rgba(15, 23, 42, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-crystal-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 
+    0 25px 50px -12px rgba(212, 175, 55, 0.16),
+    0 0 0 1px rgba(212, 175, 55, 0.3);
+}
+
+.glass-panel-dark {
+  background: rgba(18, 16, 15, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(216, 191, 138, 0.25);
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.65),
+    0 0 35px -5px rgba(185, 154, 97, 0.15),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.glow-gold-modern {
+  box-shadow: 
+    0 0 30px -4px rgba(212, 175, 55, 0.35),
+    0 10px 25px -5px rgba(212, 175, 55, 0.2);
+}
+
+.glow-aura-warm {
+  box-shadow: 0 0 35px -5px rgba(212, 175, 55, 0.3);
+}
+
+.glow-btn-navbar {
+  box-shadow: 
+    0 4px 18px -2px rgba(212, 175, 55, 0.45),
+    0 0 12px 1px rgba(245, 223, 181, 0.35);
+}
+
+.glow-btn-navbar:hover {
+  box-shadow: 
+    0 6px 26px 0 rgba(212, 175, 55, 0.65),
+    0 0 22px 4px rgba(245, 223, 181, 0.55);
+}
+
+/* High-Contrast Crisp Editorial Typography on Light Backgrounds */
+.text-depth-light-title {
+  color: #09090B;
+  letter-spacing: -0.02em;
+  word-spacing: 0.12em;
+}
+
+.text-depth-light-calligraphy {
+  color: #B8860B;
+  letter-spacing: 0.01em;
+  word-spacing: 0.1em;
 }
 
 /* Luxury Arabic Typography Depth & Ambient 3D Shadows */

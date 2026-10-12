@@ -34,10 +34,10 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   {
     id: 'chapters',
     label: {
-      ar: 'محتوى الكتاب',
-      en: 'Chapters',
+      ar: 'معاينة الدليل',
+      en: 'Book Preview',
     },
-    href: '#chapters',
+    href: '#book-preview',
   },
   {
     id: 'author',
